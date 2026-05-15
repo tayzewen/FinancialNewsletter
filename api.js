@@ -166,14 +166,14 @@ Provide exactly 5 topArticles, 4-6 anticipatedEarnings, 6-8 upcomingWeek events.
   const res = await fetch(PROXY, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ service: 'claude', messages: [{ role: 'user', content: prompt }] }),
+    body: JSON.stringify({ service: 'gemini', prompt }),
   });
 
-  if (!res.ok) throw new Error(`Claude proxy error: ${res.status}`);
+  if (!res.ok) throw new Error(`Gemini proxy error: ${res.status}`);
   const data = await res.json();
   if (data.error) throw new Error(JSON.stringify(data.error));
 
-  const text = data.content?.find(b => b.type === 'text')?.text || '{}';
+  const text = data.text || '{}';
   try {
     return JSON.parse(text.replace(/```json|```/g, '').trim());
   } catch (e) {

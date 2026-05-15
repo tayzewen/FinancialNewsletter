@@ -1,22 +1,20 @@
 /**
  * netlify/functions/proxy.js
  *
- * Serverless proxy that runs on Netlify's servers (not the browser),
- * so API keys are never exposed and CORS is never an issue.
+ * Serverless proxy — runs on Netlify's servers, never in the browser.
  *
- * Handles three services:
- *   POST /api/proxy  { service: 'fred',        seriesId, limit }
- *   POST /api/proxy  { service: 'alphavantage', ticker }
- *   POST /api/proxy  { service: 'claude',       messages, system? }
+ * Services:
+ *   POST /api/proxy  { service: 'fred',          seriesId, limit }
+ *   POST /api/proxy  { service: 'alphavantage',   ticker }
+ *   POST /api/proxy  { service: 'gemini',         prompt }
  *
  * Environment variables (set in Netlify dashboard → Site → Environment variables):
  *   FRED_API_KEY
  *   ALPHAVANTAGE_API_KEY
- *   ANTHROPIC_API_KEY
+ *   GEMINI_API_KEY
  */
 
 exports.handler = async (event) => {
-  // Only allow POST
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method not allowed' };
   }
@@ -60,31 +58,31 @@ exports.handler = async (event) => {
     return { statusCode: res.status, headers: CORS, body: JSON.stringify(data) };
   }
 
-  // ── CLAUDE (ANTHROPIC) ────────────────────────────────────────────
-  if (service === 'claude') {
-    const { messages, system } = body;
-    const key = process.env.ANTHROPIC_API_KEY;
-    if (!key) return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: 'ANTHROPIC_API_KEY not set' }) };
+  // ── GEMINI ────────────────────────────────────────────────────────
+  if (service === 'gemini') {
+    const { prompt } = body;
+    const key = process.env.GEMINI_API_KEY;
+    if (!key) return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: 'GEMINI_API_KEY not set' }) };
 
-    const payload = {
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 2500,
-      messages,
-      ...(system ? { system } : {}),
-    };
-
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
+    const res = await fetch(url, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': key,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 2500,
+        },
+      }),
     });
 
     const data = await res.json();
-    return { statusCode: res.status, headers: CORS, body: JSON.stringify(data) };
+    if (!res.ok) return { statusCode: res.status, headers: CORS, body: JSON.stringify({ error: data }) };
+
+    // Extract text from Gemini response and return in a shape api.js expects
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+    return { statusCode: 200, headers: CORS, body: JSON.stringify({ text }) };
   }
 
   return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: `Unknown service: ${service}` }) };
