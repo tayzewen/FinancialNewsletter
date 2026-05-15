@@ -188,44 +188,45 @@ async function generateReport() {
 // ─────────────────────────────────────────────
 
 async function downloadPDF() {
-  const btn = document.querySelector('.btn-primary');
-  const originalText = btn.textContent;
-  btn.textContent = 'Generating PDF...';
-  btn.disabled = true;
+  window.print();
+  // const btn = document.querySelector('.btn-primary');
+  // const originalText = btn.textContent;
+  // btn.textContent = 'Generating PDF...';
+  // btn.disabled = true;
 
-  const now = new Date();
-  const dateTag = now.toISOString().split('T')[0];
-  const filename = `Weekly-Financial-Digest-${dateTag}.pdf`;
+  // const now = new Date();
+  // const dateTag = now.toISOString().split('T')[0];
+  // const filename = `Weekly-Financial-Digest-${dateTag}.pdf`;
 
-  const element = document.getElementById('nl-content');
+  // const element = document.getElementById('nl-content');
 
-  const opt = {
-    margin:       [0.5, 0.5, 0.5, 0.5],
-    filename:     filename,
-    image:        { type: 'jpeg', quality: 0.92 },
-    html2canvas:  {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: '#0a0c0f',
-      logging: false,
-    },
-    jsPDF: {
-      unit: 'in',
-      format: 'letter',
-      orientation: 'portrait',
-    },
-    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
-  };
+  // const opt = {
+  //   margin:       [0.5, 0.5, 0.5, 0.5],
+  //   filename:     filename,
+  //   image:        { type: 'jpeg', quality: 0.92 },
+  //   html2canvas:  {
+  //     scale: 2,
+  //     useCORS: true,
+  //     backgroundColor: '#0a0c0f',
+  //     logging: false,
+  //   },
+  //   jsPDF: {
+  //     unit: 'in',
+  //     format: 'letter',
+  //     orientation: 'portrait',
+  //   },
+  //   pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
+  // };
 
-  try {
-    await html2pdf().set(opt).from(element).save();
-  } catch (e) {
-    console.error('PDF error:', e);
-    alert('PDF generation failed. Please try printing the page instead (Ctrl+P / Cmd+P).');
-  }
+  // try {
+  //   await html2pdf().set(opt).from(element).save();
+  // } catch (e) {
+  //   console.error('PDF error:', e);
+  //   alert('PDF generation failed. Please try printing the page instead (Ctrl+P / Cmd+P).');
+  // }
 
-  btn.textContent = originalText;
-  btn.disabled = false;
+  // btn.textContent = originalText;
+  // btn.disabled = false;
 }
 
 // ─────────────────────────────────────────────
