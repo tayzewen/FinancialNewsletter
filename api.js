@@ -14,7 +14,7 @@
  *   FRED_API_KEY, ALPHAVANTAGE_API_KEY, ANTHROPIC_API_KEY
  */
 
-const PROXY = '/api/proxy';
+const PROXY = '/.netlify/functions/proxy';
 
 const FRED_SERIES = {
   CPI:             { id: 'CPIAUCSL',      label: 'CPI',             unit: '%', desc: 'Consumer Price Index (Urban, All Items), YoY' },
