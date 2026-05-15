@@ -147,7 +147,7 @@ Federal Funds Rate: ${fedRate}%
 Respond ONLY with valid JSON — no markdown, no backticks, no explanation:
 
 {
-  "executiveSummary": "2-3 paragraph executive summary of current market conditions written for financial planners",
+  "executiveSummary": "2 paragraph executive summary of current market conditions written for financial planners",
   "topArticles": [
     { "headline": "...", "summary": "1 paragraph", "source": "Publication", "url": "https://...", "topic": "stocks|economy|rates|earnings|markets" }
   ],
