@@ -1,0 +1,11 @@
+# netlify.toml
+# Tells Netlify where functions live and rewrites /api/* to them.
+
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/api/proxy"
+  to = "/.netlify/functions/proxy"
+  status = 200

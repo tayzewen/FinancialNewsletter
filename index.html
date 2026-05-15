@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weekly Financial Digest</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+  <!-- LAUNCH SCREEN -->
+  <div id="launch-screen">
+    <div class="launch-inner">
+      <div class="launch-logo">⬡</div>
+      <h1 class="launch-title">Weekly<br/>Financial<br/>Digest</h1>
+      <p class="launch-sub">AI-powered market intelligence, compiled weekly.</p>
+      <div class="launch-input-row">
+        <input type="text" id="run-input" placeholder='Type "run" or press Generate' autocomplete="off" />
+        <button id="generate-btn" onclick="handleLaunch()">Generate →</button>
+      </div>
+      <p class="launch-hint">Pulls live data · Summarizes top stories · Builds your newsletter</p>
+    </div>
+  </div>
+
+  <!-- NEWSLETTER OUTPUT -->
+  <div id="newsletter" class="hidden">
+
+    <header class="nl-header">
+      <div class="header-left">
+        <span class="header-logo">⬡</span>
+        <div>
+          <div class="header-title">Weekly Financial Digest</div>
+          <div class="header-date" id="header-date"></div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn-outline" onclick="resetToLaunch()">↩ New Report</button>
+        <button class="btn-primary" onclick="downloadPDF()">⬇ Download PDF</button>
+      </div>
+    </header>
+
+    <main id="nl-content">
+
+      <!-- LOADING STATE -->
+      <div id="loading-state">
+        <div class="loading-steps" id="loading-steps"></div>
+      </div>
+
+      <!-- NEWSLETTER SECTIONS (populated by JS) -->
+      <div id="nl-sections" class="hidden"></div>
+
+    </main>
+
+    <footer class="nl-footer">
+      <p>Weekly Financial Digest · Generated <span id="footer-date"></span> · For informational purposes only. Not financial advice.</p>
+    </footer>
+
+  </div>
+
+  <script src="api.js"></script>
+  <script src="charts.js"></script>
+  <script src="newsletter.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
