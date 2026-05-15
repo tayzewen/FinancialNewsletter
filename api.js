@@ -118,6 +118,8 @@ async function fetchBenchmarkQuote(ticker) {
 }
 
 async function fetchAllBenchmarks() {
+  const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
   const results = [];
   for (const b of BENCHMARKS) {
     try {
@@ -127,6 +129,7 @@ async function fetchAllBenchmarks() {
       console.warn(`Benchmark fetch failed for ${b.ticker}:`, e.message);
       results.push({ ...b, error: true, errorMsg: e.message });
     }
+    await sleep(1200);
   }
   return results;
 }
