@@ -14,8 +14,11 @@
  *   GEMINI_API_KEY
  */
 
+let cachedAIResponse = null;
+let cachedAITimestamp = 0;
+
 exports.handler = async (event) => {
-  
+
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
@@ -73,6 +76,19 @@ exports.handler = async (event) => {
     const key = process.env.GEMINI_API_KEY;
     if (!key) return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: 'GEMINI_API_KEY not set' }) };
 
+    const CACHE_DURATION = 1000 * 60 * 30; // 30 minutes
+
+    if (
+      cachedAIResponse &&
+      Date.now() - cachedAITimestamp < CACHE_DURATION
+    ) {
+      return {
+        statusCode: 200,
+        headers: CORS,
+        body: JSON.stringify({ text: cachedAIResponse }),
+      };
+    }
+
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`;
     const res = await fetch(url, {
       method: 'POST',
@@ -81,16 +97,29 @@ exports.handler = async (event) => {
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: {
           temperature: 0.7,
-          maxOutputTokens: 7000,
+          maxOutputTokens: 3000,
         },
       }),
     });
 
     const data = await res.json();
+    if (res.status === 429) {
+      return {
+        statusCode: 429,
+        headers: CORS,
+        body: JSON.stringify({
+          error: 'AI quota exceeded. Please wait a few minutes and try again.'
+        }),
+      };
+    }
     if (!res.ok) return { statusCode: res.status, headers: CORS, body: JSON.stringify({ error: data }) };
 
     // Extract text from Gemini response and return in a shape api.js expects
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+
+    cachedAIResponse = text;
+    cachedAITimestamp = Date.now();
+
     return { statusCode: 200, headers: CORS, body: JSON.stringify({ text }) };
   }
 

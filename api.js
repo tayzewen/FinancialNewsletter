@@ -164,7 +164,7 @@ Respond ONLY with valid JSON — no markdown, no backticks, no explanation:
   ]
 }
 
-Provide exactly 5 topArticles, 4-6 anticipatedEarnings, 6-8 upcomingWeek events.`;
+Provide exactly 3 topArticles, 3 anticipatedEarnings, 3-4 upcomingWeek events.`;
 
   const res = await fetch(PROXY, {
     method: 'POST',
