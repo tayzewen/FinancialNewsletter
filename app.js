@@ -143,7 +143,7 @@ async function generateReport() {
     console.error('AI content error:', e);
     setStep('step-ai', 'error');
     aiContent = {
-      executiveSummary: 'AI summary unavailable. Please check your Anthropic API key configuration.',
+      executiveSummary: 'AI summary unavailable.',
       topArticles: [],
       fedCommentary: '',
       anticipatedEarnings: [],
